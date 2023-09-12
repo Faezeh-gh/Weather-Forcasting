@@ -72,7 +72,7 @@ def get_information():
 
 window = tk.Tk()
 window.title("Weather Forecasts")
-window.geometry("400x650")
+window.geometry("500x700")
 
 content_frame = tk.Frame(window)
 content_frame.pack(pady=10)
