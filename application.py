@@ -10,6 +10,7 @@ def change_theme():
         photo = ImageTk.PhotoImage(image)
         background_label.configure(image=photo)
         background_label.image = photo
+        search_entry.delete(0, "end")
     else:
         image_path = "day.jpg"
         image = Image.open(image_path)
@@ -17,9 +18,18 @@ def change_theme():
         background_label.configure(image=photo)
         background_label.image = photo
 
+
 def perform_search():
     search_query = search_entry.get()
     weather_label.config(text=f"Weather for '{search_query}': Sunny ☀️")
+    """if search_query:
+        results = []
+        if results:
+            print("displaying search results:", results)
+        else:
+            print("no research results found for query:", search_query)
+    else:
+        print("search query is empty")"""
 
 
 window = tk.Tk()
@@ -39,6 +49,7 @@ search_frame.pack(fill="x", padx=10, pady=(0, 10))
 
 search_entry = tk.Entry(search_frame)
 search_entry.pack(side="left", expand=True, padx=(0, 5))
+
 search_btn = tk.Button(search_frame, text="Search", command=perform_search)
 search_btn.pack(side="right")
 
