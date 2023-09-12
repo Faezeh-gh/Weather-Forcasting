@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import requests
+import datetime as dt
 
 
 def change_theme():
@@ -20,7 +21,7 @@ def change_theme():
         background_label.image = photo
 
 
-def get_temperature():
+def get_information():
     city = search_entry.get()
     if city:
         api_key = "35566f885b8f003dda9abfbe515e6722"
@@ -31,7 +32,13 @@ def get_temperature():
 
             if weather_data["cod"] == 200:
                 temperature = weather_data["main"]["temp"]
-                weather_label.config(text=f"Temperature in {city}: {temperature}°C")
+                humidity = weather_data['main']['humidity']
+                wind_speed = weather_data['wind']['speed']
+                sunrise = dt.datetime.utcfromtimestamp(weather_data['sys']['sunrise'] + weather_data['timezone'])
+                sunset = dt.datetime.utcfromtimestamp(weather_data['sys']['sunset'] + weather_data['timezone'])
+                weather_label.config(text=f"Temperature in {city}: {temperature}°C\nHumidity: {humidity}%\n"
+                                          f"Wind speed: {wind_speed} m/s\nThe sun rises at {sunrise} local time."
+                                          f"\nThe sun sets at {sunset} local time.")
             else:
                 weather_label.config(text="City not found")
         except requests.exceptions.RequestException:
@@ -42,6 +49,7 @@ def get_temperature():
 
 window = tk.Tk()
 window.title("Weather Forecasts")
+window.geometry("500x700")
 
 content_frame = tk.Frame(window)
 content_frame.pack(pady=10)
@@ -52,7 +60,7 @@ initial_photo = ImageTk.PhotoImage(initial_image)
 background_label = tk.Label(content_frame, image=initial_photo)
 background_label.grid(row=0, column=0, columnspan=2)
 
-change_button = tk.Button(content_frame, text="Change theme", command=change_theme, background="blue")
+change_button = tk.Button(content_frame, text="Change theme", command=change_theme, background="orange")
 change_button.grid(row=1, column=0, pady=5)
 
 search_frame = tk.Frame(content_frame)
@@ -61,7 +69,7 @@ search_frame.grid(row=2, column=0, padx=10)
 search_entry = tk.Entry(search_frame, font=("Arial", 14))
 search_entry.grid(row=0, column=0, padx=10)
 
-search_btn = tk.Button(search_frame, text="Search", command=get_temperature)
+search_btn = tk.Button(search_frame, text="Search", command=get_information)
 search_btn.grid(row=0, column=1, padx=5)
 
 weather_label = tk.Label(content_frame, text="", font=("Arial", 16))
