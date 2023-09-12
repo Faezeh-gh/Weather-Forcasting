@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import requests
 import datetime as dt
+import emoji
 
 
 def change_theme():
@@ -32,12 +33,33 @@ def get_information():
 
             if weather_data["cod"] == 200:
                 temperature = weather_data["main"]["temp"]
-                description = weather_data['weather'][0]['description']
+                description = weather_data['weather'][0]['main']
                 humidity = weather_data['main']['humidity']
                 wind_speed = weather_data['wind']['speed']
                 sunrise = dt.datetime.utcfromtimestamp(weather_data['sys']['sunrise'] + weather_data['timezone'])
                 sunset = dt.datetime.utcfromtimestamp(weather_data['sys']['sunset'] + weather_data['timezone'])
-                weather_label.config(text=f"Weather in {city}: {description} \nTemperature in {city}: {temperature}°C\nHumidity: {humidity}%\n"
+
+                emoji = ""
+
+                if description == "Clear":
+                    emoji = "☀️"
+                elif description == "Clouds":
+                    emoji = "☁️"
+                elif description == "Rain":
+                    emoji = "🌧️"
+                elif description == "Thunderstorm":
+                    emoji = "⛈️"
+                elif description == "Snow":
+                    emoji = "❄️"
+                elif description == "Mist" or description == "Haze" or description == "Fog":
+                    emoji = "🌫️"
+                elif description == "Drizzle":
+                    emoji = "🌦️"
+                else:
+                    emoji = ""
+
+                weather_label.config(text=f"Weather in {city}: {description} {emoji} \nTemperature in {city}:"
+                                          f"{temperature}°C \nHumidity: {humidity}%\n"
                                           f"Wind speed: {wind_speed} m/s\nThe sun rises at {sunrise} local time."
                                           f"\nThe sun sets at {sunset} local time.")
             else:
@@ -50,7 +72,7 @@ def get_information():
 
 window = tk.Tk()
 window.title("Weather Forecasts")
-window.geometry("500x700")
+window.geometry("400x650")
 
 content_frame = tk.Frame(window)
 content_frame.pack(pady=10)
@@ -61,19 +83,19 @@ initial_photo = ImageTk.PhotoImage(initial_image)
 background_label = tk.Label(content_frame, image=initial_photo)
 background_label.grid(row=0, column=0, columnspan=2)
 
-change_button = tk.Button(content_frame, text="Change theme", command=change_theme, background="orange")
+change_button = tk.Button(content_frame, text="Change theme", command=change_theme, bg="cadetblue2", fg="steelblue4")
 change_button.grid(row=1, column=0, pady=5)
 
-search_frame = tk.Frame(content_frame)
+search_frame = tk.Frame(content_frame, bg="cadetblue2")
 search_frame.grid(row=2, column=0, padx=10)
 
 search_entry = tk.Entry(search_frame, font=("Arial", 14))
 search_entry.grid(row=0, column=0, padx=10)
 
-search_btn = tk.Button(search_frame, text="Search", command=get_information)
+search_btn = tk.Button(search_frame, text="Search", command=get_information, bg="azure2", fg="steelblue4")
 search_btn.grid(row=0, column=1, padx=5)
 
-weather_label = tk.Label(content_frame, text="", font=("Arial", 16))
+weather_label = tk.Label(content_frame, text="", font=("Arial", 14), bg="azure2", fg="blueviolet")
 weather_label.grid(row=3, column=0, pady=10)
 
 
