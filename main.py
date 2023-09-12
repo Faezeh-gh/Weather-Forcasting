@@ -1,39 +1,42 @@
-import datetime as dt
+import tkinter as tk
 import requests
 
 
-Base_url = "https://api.openweathermap.org/data/2.5/weather?q="
-API_key = "35566f885b8f003dda9abfbe515e6722"
+def get_temperature():
+    city = search_entry.get()
+    if city:
+        api_key = "35566f885b8f003dda9abfbe515e6722"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
 
-city = "Tehran"
+        try:
+            response = requests.get(url)
+            weather_data = response.json()
 
-def fahrenheit_to_celsius(fahrenheit):
-    celsius = (fahrenheit - 32) / 1.8
-    return celsius
+            if weather_data["cod"] == 200:
+                temperature = weather_data["main"]["temp"]
+                temperature_label.config(text=f"Temperature in {city}: {temperature}°C")
+            else:
+                temperature_label.config(text="City not found")
+        except requests.exceptions.RequestException:
+            temperature_label.config(text="Error occurred")
+    else:
+        temperature_label.config(text="Please enter a city")
 
-url = (f"https://api.openweathermap.org/data/2.5/weather?q="
-                            f"{city}&units=imperial&APPID={API_key}")
 
-response = requests.get(url).json()
+root = tk.Tk()
+root.title("City Temperature")
 
-temp_celsius = fahrenheit_to_celsius(response['main']['temp'])
+search_frame = tk.Frame(root)
+search_frame.pack(pady=10)
 
-feel_like_celsius = fahrenheit_to_celsius(response['main']['feels_like'])
+search_entry = tk.Entry(search_frame, font=("Arial", 14))
+search_entry.pack(side=tk.LEFT, padx=10)
 
-windspeed = response['wind']['speed']
+search_button = tk.Button(search_frame, text="Search", command=get_temperature)
+search_button.pack(side=tk.LEFT)
 
-humidity = response['main']['humidity']
+temperature_label = tk.Label(root, font=("Arial", 16))
+temperature_label.pack(pady=10)
 
-description = response['weather'][0]['description']
 
-sunrise = dt.datetime.utcfromtimestamp(response['sys']['sunrise'] + response['timezone'])
-sunset = dt.datetime.utcfromtimestamp(response['sys']['sunset'] + response['timezone'])
-
-print(f"tempreture in {city}: {temp_celsius:.2f}C")
-print(f"tempreture in {city}: feels like: {feel_like_celsius:.2f}C")
-print(f"tempreture in {city}: {temp_celsius:.2f}C")
-print(f"humidity in {city}: {humidity}%")
-print(f"wind speed in {city}: {windspeed}m/s")
-print(f"general weather in {city}: {description}")
-print(f"sun rises in {city} at {sunrise} local time.")
-print(f"sun sets in {city} at {sunset} local time.")
+root.mainloop()
