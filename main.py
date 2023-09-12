@@ -32,11 +32,12 @@ def get_information():
 
             if weather_data["cod"] == 200:
                 temperature = weather_data["main"]["temp"]
+                description = weather_data['weather'][0]['description']
                 humidity = weather_data['main']['humidity']
                 wind_speed = weather_data['wind']['speed']
                 sunrise = dt.datetime.utcfromtimestamp(weather_data['sys']['sunrise'] + weather_data['timezone'])
                 sunset = dt.datetime.utcfromtimestamp(weather_data['sys']['sunset'] + weather_data['timezone'])
-                weather_label.config(text=f"Temperature in {city}: {temperature}°C\nHumidity: {humidity}%\n"
+                weather_label.config(text=f"Weather in {city}: {description} \nTemperature in {city}: {temperature}°C\nHumidity: {humidity}%\n"
                                           f"Wind speed: {wind_speed} m/s\nThe sun rises at {sunrise} local time."
                                           f"\nThe sun sets at {sunset} local time.")
             else:
