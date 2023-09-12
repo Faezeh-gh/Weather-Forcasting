@@ -1,5 +1,23 @@
 import tkinter as tk
+from PIL import Image, ImageTk
 import requests
+
+
+def change_theme():
+    current_image = background_label.cget("image")
+    if current_image == str(initial_photo):
+        image_path = "night.jpg"
+        image = Image.open(image_path)
+        photo = ImageTk.PhotoImage(image)
+        background_label.configure(image=photo)
+        background_label.image = photo
+        search_entry.delete(0, "end")
+    else:
+        image_path = "day.jpg"
+        image = Image.open(image_path)
+        photo = ImageTk.PhotoImage(image)
+        background_label.configure(image=photo)
+        background_label.image = photo
 
 
 def get_temperature():
@@ -14,29 +32,38 @@ def get_temperature():
 
             if weather_data["cod"] == 200:
                 temperature = weather_data["main"]["temp"]
-                temperature_label.config(text=f"Temperature in {city}: {temperature}°C")
+                weather_label.config(text=f"Temperature in {city}: {temperature}°C")
             else:
-                temperature_label.config(text="City not found")
+                weather_label.config(text="City not found")
         except requests.exceptions.RequestException:
-            temperature_label.config(text="Error occurred")
+            weather_label.config(text="Error occurred")
     else:
-        temperature_label.config(text="Please enter a city")
+        weather_label.config(text="Please enter a city")
 
 
-root = tk.Tk()
-root.title("City Temperature")
+window = tk.Tk()
+window.title("Weather Forcasting")
 
-search_frame = tk.Frame(root)
-search_frame.pack(pady=10)
+initial_image = Image.open("day.jpg")
+initial_photo = ImageTk.PhotoImage(initial_image)
 
-search_entry = tk.Entry(search_frame, font=("Arial", 14))
-search_entry.pack(side=tk.LEFT, padx=10)
+background_label = tk.Label(window, image=initial_photo)
+background_label.pack()
 
-search_button = tk.Button(search_frame, text="Search", command=get_temperature)
-search_button.pack(side=tk.LEFT)
+change_button = tk.Button(window, text="Change theme", command=change_theme, background="yellow")
+change_button.pack()
 
-temperature_label = tk.Label(root, font=("Arial", 16))
-temperature_label.pack(pady=10)
+search_frame = tk.Frame(window, bg="white")
+search_frame.pack(fill="x", padx=10, pady=(0, 10))
+
+search_entry = tk.Entry(search_frame)
+search_entry.pack(side="left", expand=True, padx=(0, 5))
+
+search_btn = tk.Button(search_frame, text="Search", command=get_temperature)
+search_btn.pack(side="right")
+
+weather_label = tk.Label(window, text="", font=("Arial", 14))
+weather_label.pack(pady=10)
 
 
-root.mainloop()
+window.mainloop()
