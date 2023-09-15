@@ -9,17 +9,20 @@ def change_theme(hour):
     current_image = background_label.cget("image")
     if current_image == str(initial_photo):
         if hour >= 6 and hour < 18:
-            image_path = "day.jpg"
+            image_path = "day.JPG"
         else:
             image_path = "night.jpg"
     else:
         if hour >= 6 and hour < 18:
             image_path = "day.JPG"
         else:
-            image_path = "night.png"
+            image_path = "night.jpg"
 
     image = Image.open(image_path)
-    photo = ImageTk.PhotoImage(image)
+    new_width = 360
+    new_height = 400
+    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    photo = ImageTk.PhotoImage(resized_image)
     background_label.configure(image=photo)
     background_label.image = photo
     search_entry.delete(0, "end")
