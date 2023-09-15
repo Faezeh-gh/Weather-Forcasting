@@ -8,8 +8,8 @@
         😄:emoji
 
 ## 🔴 2.change_theme function:
-        🚩:In this function I wxplain day and night images ,
-            and of course I write if clause to change the current theme. 
+        🚩:In this function I explain day and night images , and of course I write if clause to change the current 
+           theme.And based on the city's time the background will be changed. 
 
 ## 🟣 3.get_information function:
           1️⃣:Enter the city
