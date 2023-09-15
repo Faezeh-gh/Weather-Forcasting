@@ -1,3 +1,4 @@
+#import datetime
 import tkinter as tk
 from PIL import Image, ImageTk
 import requests
@@ -5,21 +6,35 @@ import datetime as dt
 import emoji
 
 
-def change_theme():
-    current_image = background_label.cget("image")
-    if current_image == str(initial_photo):
-        image_path = "night.jpg"
-        image = Image.open(image_path)
-        photo = ImageTk.PhotoImage(image)
-        background_label.configure(image=photo)
-        background_label.image = photo
-        search_entry.delete(0, "end")
+def change_theme(city):
+    time_info = get_city_time(city)
+    current_hour = time_info
+    image_path = ""
+    if current_hour >= 6 and current_hour < 18:
+        image_path = ("day.jpg")
     else:
-        image_path = "day.jpg"
-        image = Image.open(image_path)
-        photo = ImageTk.PhotoImage(image)
-        background_label.configure(image=photo)
-        background_label.image = photo
+        image_path = "night.jpg"
+
+    image = Image.open(image_path)
+    photo = ImageTk.PhotoImage(image)
+    background_label.configure(image=photo)
+    background_label.image = photo
+
+
+def get_city_time(city):
+    api_key = "35566f885b8f003dda9abfbe515e6722"
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    try:
+        response = requests.get(url)
+        time_data = response.json()
+        if "datetime" in time_data:
+            time_str = time_data["datetime"]
+            time_info = datetime.datetime(time_str,"%Y-%m-%dT%H:%M:%S.%f%z")
+            return time_info
+    except requests.exceptions.RequestException:
+        pass
+
+    return None
 
 
 def get_information():
@@ -74,20 +89,20 @@ window = tk.Tk()
 window.title("Weather Forecasts")
 window.geometry("500x700")
 
-content_frame = tk.Frame(window)
-content_frame.pack(pady=10)
+"""content_frame = tk.Frame(window)
+content_frame.pack(pady=10)"""
 
 initial_image = Image.open("day.jpg")
 initial_photo = ImageTk.PhotoImage(initial_image)
 
-background_label = tk.Label(content_frame, image=initial_photo)
-background_label.grid(row=0, column=0, columnspan=2)
+background_label = tk.Label(window, image=initial_photo)
+background_label.pack()
 
-change_button = tk.Button(content_frame, text="Change theme", command=change_theme, bg="cadetblue2", fg="steelblue4")
+"""change_button = tk.Button(content_frame, text="Change theme", command=change_theme, bg="cadetblue2", fg="steelblue4")
 change_button.grid(row=1, column=0, pady=5)
-
-search_frame = tk.Frame(content_frame, bg="cadetblue2")
-search_frame.grid(row=2, column=0, padx=10)
+"""
+search_frame = tk.Frame(window, bg="cadetblue2")
+search_frame.pack(padx=10)
 
 search_entry = tk.Entry(search_frame, font=("Arial", 14))
 search_entry.grid(row=0, column=0, padx=10)
@@ -95,8 +110,8 @@ search_entry.grid(row=0, column=0, padx=10)
 search_btn = tk.Button(search_frame, text="Search", command=get_information, bg="azure2", fg="steelblue4")
 search_btn.grid(row=0, column=1, padx=5)
 
-weather_label = tk.Label(content_frame, text="", font=("Arial", 14), bg="azure2", fg="blueviolet")
-weather_label.grid(row=3, column=0, pady=10)
+weather_label = tk.Label(window, text="", font=("Arial", 14), bg="azure2", fg="blueviolet")
+weather_label.pack(pady=10)
 
 
 window.mainloop()
